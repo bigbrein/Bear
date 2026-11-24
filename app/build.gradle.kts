@@ -12,8 +12,8 @@ android {
         applicationId = "com.bigbrein.bear"
         minSdk = 29 // Android 10
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     // One APK per CPU type keeps size down (the Python + FFmpeg bundle is large).
@@ -60,6 +60,8 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.0")
+
+    implementation("io.coil-kt:coil-compose:2.7.0")
 
     implementation(platform("androidx.compose:compose-bom:2025.05.01"))
     implementation("androidx.compose.ui:ui")

@@ -17,12 +17,24 @@ object Exporter {
     private const val ROOT = "Download/Bear"
 
     // Leftovers yt-dlp may leave behind that the user doesn't want.
-    private val skipExtensions = setOf("part", "ytdl", "jpg", "webp", "png", "json", "temp")
+    private val skipExtensions = setOf("part", "ytdl", "json", "temp")
+    private val imageExtensions = setOf("jpg", "jpeg", "webp", "png")
+
+    /** Thumbnails next to a video/audio file of the same name are leftovers; a lone image is the download. */
+    private fun isLeftover(file: File): Boolean {
+        val ext = file.extension.lowercase()
+        if (ext in skipExtensions) return true
+        if (ext !in imageExtensions) return false
+        return file.parentFile?.listFiles()?.any {
+            it != file && it.nameWithoutExtension == file.nameWithoutExtension &&
+                it.extension.lowercase() !in imageExtensions
+        } == true
+    }
 
     suspend fun exportAll(context: Context, workDir: File): List<String> = withContext(Dispatchers.IO) {
         val saved = mutableListOf<String>()
         workDir.walkTopDown()
-            .filter { it.isFile && it.extension.lowercase() !in skipExtensions }
+            .filter { it.isFile && !isLeftover(it) }
             .forEach { file ->
                 val subDir = file.parentFile!!.relativeTo(workDir).path
                 val relativePath = if (subDir.isEmpty()) "$ROOT/" else "$ROOT/$subDir/"
